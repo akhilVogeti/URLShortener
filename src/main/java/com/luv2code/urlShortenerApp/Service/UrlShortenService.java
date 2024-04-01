@@ -2,6 +2,7 @@ package com.luv2code.urlShortenerApp.Service;
 
 import com.luv2code.urlShortenerApp.Entity.UrlEntity;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 public interface UrlShortenService {
@@ -9,11 +10,11 @@ public interface UrlShortenService {
 
     UrlEntity save(UrlEntity theUrlEntity);
 
-//    void deleteExpired();
+    void cleanUp();
 
     UrlEntity findByShortenedUrl(String shortUrl);
 
     UrlEntity findByActualUrl(String longUrl);
 
-    UrlEntity shorten(String longUrl);
+    UrlEntity shorten(String longUrl) throws Exception ;
 }
