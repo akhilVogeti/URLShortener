@@ -3,11 +3,16 @@ package com.luv2code.urlShortenerApp.Service;
 import jakarta.servlet.http.HttpSession;
 import org.apache.commons.codec.binary.Base32;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
-
+@Component
+@ConditionalOnProperty(name = "shortening.strategy", havingValue = "hash-based")
 public class HashBasedShortener implements UrlShorteningStrategy {
 
     @Autowired
@@ -19,22 +24,37 @@ public class HashBasedShortener implements UrlShorteningStrategy {
         String sessionId = httpSession.getId();
         String text = longUrl + sessionId;
         try {
-            byte[] textBytes = text.getBytes(StandardCharsets.UTF_8); // Encode text to byte array
-
+            byte[] textBytes = text.getBytes(StandardCharsets.UTF_8);
             MessageDigest md5 = MessageDigest.getInstance("MD5");
-            md5.update(textBytes); // Update digest with byte array
-            byte[] md5Hash = md5.digest(); // Generate MD5 hash
-
-//            String base64EncodedHash = Base32.getEncoder().encodeToString(md5Hash); // Base64 encode hash
-////            String base62EncodedHash = Base62Codec.INSTANCE.encode(md5Hash);
-            String base32Encoded = new Base32().encodeAsString(md5Hash);
-            System.out.println("Base64 encoded MD5 hash: " + base32Encoded);
-            return base32Encoded;
+            md5.update(textBytes);
+            byte[] md5Hash = md5.digest();
+            String encodedString = new Base32().encodeAsString(md5Hash);
+            String shortUrl = randomlySelect8Chars(encodedString);
+            return shortUrl;
         } catch (Exception e) {
             System.out.println("error in hash based");
             throw new Exception("internal error");
         }
     }
+
+    private String randomlySelect8Chars(String encodedString) {
+        Random random = ThreadLocalRandom.current();
+        char[] encodedChars =  encodedString.toCharArray();
+        assert encodedChars.length == 21;
+        for(int i=20; i >=0; i--) {
+            int randomIndex =  random.nextInt(i+1);
+            swap(encodedChars,randomIndex,i);
+        }
+
+        return new String(encodedChars,0,8);
+    }
+
+    private static void swap(char[] chars, int i, int j) {
+        char temp = chars[i];
+        chars[i] = chars[j];
+        chars[j] = temp;
+    }
+
 }
 
 
@@ -46,7 +66,3 @@ public class HashBasedShortener implements UrlShorteningStrategy {
 
 
 
-
-//    byte[] encodedBytes = Base64.getEncoder().encode(combinedString.getBytes());
-//    String shortString = new String(encodedBytes);
-//        return shortString.substring(0, 7);

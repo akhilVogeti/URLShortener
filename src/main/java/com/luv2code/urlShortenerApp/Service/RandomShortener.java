@@ -1,10 +1,14 @@
 package com.luv2code.urlShortenerApp.Service;
 
 import com.luv2code.urlShortenerApp.Entity.UrlEntity;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
-
+@Component
+@ConditionalOnProperty(name = "shortening.strategy", havingValue = "random")
 public class RandomShortener implements UrlShorteningStrategy {
     @Override
     public String shorten(String longUrl) throws Exception{
