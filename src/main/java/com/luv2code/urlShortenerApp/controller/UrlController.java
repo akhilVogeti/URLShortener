@@ -17,7 +17,7 @@ public class UrlController {
 
     @PostMapping("/shorten")
     public UrlEntity getShortenedUrl(@RequestBody  UrlEntity urlEntity) {
-        System.out.println("under postmapping /shorten");
+        
         UrlEntity theUrlEntity = null;
         try {
             theUrlEntity = urlShortenService.shorten(urlEntity.getActualUrl());

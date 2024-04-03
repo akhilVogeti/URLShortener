@@ -60,25 +60,25 @@ public class UrlShortenServiceImpl implements UrlShortenService {
     public UrlEntity shorten(String longUrl) throws Exception {
 
         String sessionId = httpSession.getId();
-//        String combinedKey = longUrl + sessionId; // Combine longUrl and sessionId
-
-        // Check if a record already exists with the combined key
         UrlEntity existingUrl = urlRepository.findByActualUrlAndSessionId(longUrl, sessionId);
 
         if (existingUrl != null) {
-            System.out.println("URL already shortened for this session, returning existing record");
-            return existingUrl;
+            System.out.println("URL already shortened for this session & URL, returning existing record & updating the expiry");
+            existingUrl.setExpiresAt(LocalDateTime.now().plusMinutes(5));
+            return urlRepository.save(existingUrl);
         }
-
 
         try {
             String shortUrlGenerated = shortener.shorten(longUrl);
+            System.out.println("Shortened url generated");
             UrlEntity urlEntity = new UrlEntity(longUrl, shortUrlGenerated, LocalDateTime.now(), httpSession.getId());
             return urlRepository.save(urlEntity);
         } catch (Exception e) {
             System.out.println("internal error");
         }throw new Exception("Internal error");
+
     }
+
 }
 
 
