@@ -1,0 +1,20 @@
+
+DROP DATABASE IF EXISTS short_project;
+
+
+CREATE DATABASE short_project;
+
+USE short_project;
+
+
+DROP TABLE IF EXISTS urls;
+
+
+CREATE TABLE urls (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  session_id VARCHAR(100) NOT NULL,
+  actual_url VARCHAR(1024) NOT NULL,
+  shortened_url VARCHAR(100) NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  expires_at DATETIME
+);

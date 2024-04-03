@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  mysqldb:
+    image: mysql:5.7
+    restart: unless-stopped
+    environment:
+      MYSQL_USER : admin
+      MYSQL_PASSWORD : admin
+      MYSQL_ROOT_PASSWORD : admin
+      MYSQL_DATABASE : short_project
+    ports:
+      - 3306:3306
+    volumes:
+      - ./mysql-init-files:/docker-entrypoint-initdb.d
+
+        
+  app:
+    depends_on:
+      - mysqldb
+    build: .
+    ports:
+      - 8080:8080
+    environment:
+        SPRING_DATASOURCE_URL  : jdbc:mysql://mysqldb:3306/short_project?autoReconnect=true&allowPublicKeyRetrieval=true&useSSl=false
+        SPRING_DATASOURCE_USERNAME : admin
+        SPRING_DATASOURCE_PASSWORD : admin
+        SHORTENING_STRATEGY : random
+
+
+
+
+
+
+
+
