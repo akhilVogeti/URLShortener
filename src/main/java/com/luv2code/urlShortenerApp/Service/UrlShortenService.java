@@ -14,5 +14,5 @@ public interface UrlShortenService {
 
     UrlEntity findByShortenedUrl(String shortUrl);
 
-    UrlEntity shorten(String longUrl) throws Exception ;
+    UrlEntity shorten(String longUrl);
 }
