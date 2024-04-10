@@ -33,7 +33,7 @@ public class UrlEntity implements Serializable {
         this.createdAt = createdAt;
         this.sessionId = sessionId;
         this.shortenedUrl = shortenedUrl;
-        this.expiresAt = LocalDateTime.now().plusMinutes(2);
+        this.expiresAt = LocalDateTime.now().plusMinutes(3);
 
     }
 

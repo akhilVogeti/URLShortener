@@ -1,7 +1,9 @@
 package com.luv2code.urlShortenerApp.Service;
 
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.codec.binary.Base32;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
@@ -12,6 +14,7 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Component
+@Log4j2
 @ConditionalOnProperty(name = "shortening.strategy", havingValue = "hash-based")
 public class HashBasedShortener implements UrlShorteningStrategy {
 
@@ -20,7 +23,7 @@ public class HashBasedShortener implements UrlShorteningStrategy {
 
     @Override
     public String shorten(String longUrl) throws Exception {
-        System.out.println("in hash-based shortening");
+        log.info("in hash-based shortening");
         String sessionId = httpSession.getId();
         String text = longUrl + sessionId;
         try {
@@ -32,8 +35,8 @@ public class HashBasedShortener implements UrlShorteningStrategy {
             String shortUrl = randomlySelect8Chars(encodedString);
             return shortUrl;
         } catch (Exception e) {
-            System.out.println("error in hash based");
-            throw new Exception("internal error");
+            log.error("error in hash based shortening");
+            throw new Exception();
         }
     }
 

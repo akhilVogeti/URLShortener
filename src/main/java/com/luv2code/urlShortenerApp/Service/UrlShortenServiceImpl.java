@@ -5,50 +5,32 @@ import com.luv2code.urlShortenerApp.Entity.UrlEntity;
 import com.luv2code.urlShortenerApp.cache.Cache;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import redis.clients.jedis.JedisPool;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @EnableScheduling
+@Log4j2
 public class UrlShortenServiceImpl implements UrlShortenService {
 
-    private static final String REDIS_HOST = "localhost";
-    private static final int REDIS_PORT = 6379;
-    private static final int EXPIRY_SECONDS = 300;
-
-    private static final JedisPool jedisPool;
-
-    static {  // Static block for initialization
-        jedisPool = new JedisPool(REDIS_HOST, REDIS_PORT);
-    }
-
+    private final Cache<UrlEntity> cache;
+    private final HttpSession httpSession;
+    private final UrlRepository urlRepository;
+    private final UrlShorteningStrategy shortener;
 
     @Autowired
-    private Cache<UrlEntity> cache;
-
-    @Autowired
-    private HttpSession httpSession;
-
-    private UrlShorteningStrategy shortener;
-    @Autowired
-    public UrlShortenServiceImpl(UrlShorteningStrategy shortener) {
+    public UrlShortenServiceImpl(Cache<UrlEntity> cache, HttpSession httpSession, UrlRepository urlRepository, UrlShorteningStrategy shortener) {
+        this.cache = cache;
+        this.httpSession = httpSession;
+        this.urlRepository = urlRepository;
         this.shortener = shortener;
     }
-
-    public UrlShortenServiceImpl() {}
-
-    @Autowired
-    private UrlRepository urlRepository;
-    public UrlShortenServiceImpl(UrlRepository theUrlRepository) {
-        urlRepository = theUrlRepository;
-    }
-
     @Override
     public List<UrlEntity> findAll() {
         return urlRepository.findAll();
@@ -61,10 +43,10 @@ public class UrlShortenServiceImpl implements UrlShortenService {
 
     @Override
     @Transactional
-    @Scheduled(fixedRate = 2 * 60 * 1000)
+    @Scheduled(fixedRate = 3 * 60 * 1000)
     public void cleanUp() {
         LocalDateTime now = LocalDateTime.now();
-        System.out.println("in clean-up method");
+        log.info("in clean-up method");
         urlRepository.deleteByExpiresAtLessThanEqual(now);
     }
 
@@ -72,13 +54,23 @@ public class UrlShortenServiceImpl implements UrlShortenService {
     public UrlEntity findByShortenedUrl(String shortUrl) {
         String cacheKey = shortUrl;
         UrlEntity existingUrl = getFromCache(cacheKey);
-        if(existingUrl != null) {
-            System.out.println("getting short url from cache");
-            return existingUrl;
+        System.out.println(existingUrl);
+        if (existingUrl.getCreatedAt() == null) {
+            log.info("URL not found in cache, getting from database");
+            existingUrl = urlRepository.findByShortenedUrl(shortUrl);
+
+            if (existingUrl.getCreatedAt() != null) {
+                log.info("URL found in database, saving to cache");
+                saveInCache(cacheKey, existingUrl, 60);
+            }
+
+        } else {
+            log.info("URL found in cache");
         }
-        System.out.println("getting from DB");
-        return urlRepository.findByShortenedUrl(shortUrl);
+
+        return existingUrl;
     }
+
 
     @Override
     public UrlEntity shorten(String longUrl) {
@@ -87,8 +79,8 @@ public class UrlShortenServiceImpl implements UrlShortenService {
 
         UrlEntity existingUrl = urlRepository.findByActualUrlAndSessionId(longUrl, sessionId);
         if (existingUrl != null && existingUrl.getExpiresAt().isAfter(LocalDateTime.now())) {
-            LocalDateTime expiry = LocalDateTime.now().plusMinutes(2);
-            System.out.println("URL already shortened for this session & URL, returning existing record & updating the expiry");
+            LocalDateTime expiry = LocalDateTime.now().plusMinutes(3);
+            log.info("URL already shortened for this session & URL, returning existing record & updating the expiry");
             existingUrl.setExpiresAt(expiry);
             saveInCache(existingUrl.getShortenedUrl(),existingUrl,60);
             return urlRepository.save(existingUrl);
@@ -96,13 +88,13 @@ public class UrlShortenServiceImpl implements UrlShortenService {
 
         try {
             String shortUrlGenerated = shortener.shorten(longUrl);
-            System.out.println("Shortened url generated");
+            log.info("Shortened url generated");
             UrlEntity urlEntity = new UrlEntity(longUrl, shortUrlGenerated, LocalDateTime.now(), httpSession.getId());
             saveInCache(shortUrlGenerated,urlEntity,60);
             return urlRepository.save(urlEntity);
         } catch (Exception e) {
-            System.out.println("internal error");
-            return null;
+            log.error("error in generating shortened string");
+            return new UrlEntity();
         }
 
     }
@@ -112,7 +104,7 @@ public class UrlShortenServiceImpl implements UrlShortenService {
        try {
            cache.save(shortUrl,entity,expiry);
        } catch (Exception e) {
-           System.out.println("error in saveInCache");
+           log.error("error in saveInCache method");
        }
     }
 
@@ -123,8 +115,8 @@ public class UrlShortenServiceImpl implements UrlShortenService {
            UrlEntity entity = cache.get(cacheKey);
            return entity;
        } catch (Exception e) {
-           System.out.println("Error in getFromCache");
-           return null;
+           log.error("error in getFromCache method");
+           return new UrlEntity();
        }
     }
 }

@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/v1/shortener/")
 public class UrlController {
 
     private UrlShortenService urlShortenService;
@@ -27,7 +27,7 @@ public class UrlController {
         return theUrlEntity;
     }
 
-    @GetMapping("/getActualUrl/{shortenedUrl}")
+    @GetMapping("/expand/{shortenedUrl}")
     public UrlEntity getActualUrl(@PathVariable String shortenedUrl) {
          return urlShortenService.findByShortenedUrl(shortenedUrl);
     }
