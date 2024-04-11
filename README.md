@@ -3,8 +3,7 @@ A spring boot application that will take in a long URL and returns a randomised 
 
 ## APIs
 1. Method: POST  
-   Path: https://localhost:8080/api/v1/shortener/shorten
-    Body: { "actualUrl" : " "} JSON body with actual long URL as input.   
+   Path: https://localhost:8080/api/v1/shortener/shorten  Body: { "actualUrl" : " "} JSON body with actual long URL as input.   
    Response: a JSON with id, generated short URL, actual URL, created time, and expiry.
 
 2. Method: GET  
