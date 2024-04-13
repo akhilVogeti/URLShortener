@@ -15,13 +15,14 @@ services:
       - ./mysql-init-files:/docker-entrypoint-initdb.d
 
   redis:
-    image: redis
+    image: redis:latest
     ports:
       - 6379:6379
         
   app:
     depends_on:
       - mysqldb
+      - redis
     build: .
     ports:
       - 8080:8080

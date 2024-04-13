@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/shortener/")
+@RequestMapping("/api/v1/shortener")
 public class UrlController {
 
     private UrlShortenService urlShortenService;

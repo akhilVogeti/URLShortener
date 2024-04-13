@@ -16,7 +16,6 @@ Docker to run the dockerised application, & Postman for using the APIs.
 
 #### Run
 ````
-mvn clean install  
 docker compose up
 ````
 
