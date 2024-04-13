@@ -2,11 +2,12 @@ package com.luv2code.urlShortenerApp.Entity;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "urls")
-public class UrlEntity {
+public class UrlEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +33,7 @@ public class UrlEntity {
         this.createdAt = createdAt;
         this.sessionId = sessionId;
         this.shortenedUrl = shortenedUrl;
-        this.expiresAt = LocalDateTime.now().plusMinutes(5);
+        this.expiresAt = LocalDateTime.now().plusMinutes(3);
 
     }
 

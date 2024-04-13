@@ -1,6 +1,10 @@
 package com.luv2code.urlShortenerApp.Service;
 
 import com.luv2code.urlShortenerApp.Entity.UrlEntity;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
@@ -8,13 +12,16 @@ import org.springframework.stereotype.Component;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 @Component
+@Log4j2
 @ConditionalOnProperty(name = "shortening.strategy", havingValue = "random")
 public class RandomShortener implements UrlShorteningStrategy {
+
+ 
     @Override
     public String shorten(String longUrl) throws Exception{
-        System.out.println("in random shortening service");
+        log.info("in random shortening service");
         String shortUrlGenerated = generateRandomString(10);
-        System.out.println("random string done");
+        log.info("random string done");
         return shortUrlGenerated;
     }
 
