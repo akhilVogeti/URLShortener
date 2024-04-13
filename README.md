@@ -53,10 +53,10 @@ A successful response for shortening a URL looks like this:
 ```json
 {
   "id": 1,
-  "shortUrl": "a1b2c3d4e5f6g7h8i9j0k1l2m3",
   "actualUrl": "https://www.example.com/",
-  "createdTime": "2022-01-01T12:00:00Z",
-  "expiry": "2022-01-02T12:00:00Z"
+  "shortenedUrl": "a1b2c3d4e5f6g7h8i9j0k1l2m3",
+  "createdAt": "2022-01-01T12:00:00Z",
+  "expiresAt": "2022-01-02T12:00:00Z"
 }
 ```
 
@@ -66,9 +66,9 @@ An example response for expanding a short URL:
 {
   "id": 1,
   "actualUrl": "https://www.example.com/",
-  "shortUrl": "a1b2c3d4e5f6g7h8i9j0k1l2m3",
-  "createdTime": "2022-01-01T12:00:00Z",
-  "expiry": "2022-01-02T12:00:00Z"
+  "shortenedUrl": "a1b2c3d4e5f6g7h8i9j0k1l2m3",
+  "createdAt": "2022-01-01T12:00:00Z",
+  "expiresAt": "2022-01-02T12:00:00Z"
 }
 ```
 
