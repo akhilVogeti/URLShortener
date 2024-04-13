@@ -17,7 +17,8 @@ cd url-shortener
 To start the application, run the following command:
 
 ```bash
-docker-compose up
+docker compose up mysqldb redis -d
+docker compose up app
 ```
 
 ## APIs
@@ -85,3 +86,15 @@ To contribute to the project, follow these steps:
 ## License
 
 This project is licensed under the MIT license.
+
+## Architecture
+
+```mermaid
+graph LR
+User --> App
+App --> Redis
+Redis -.-> App
+Mysql -.-> App
+App --> Mysql
+App -.-> User
+```
