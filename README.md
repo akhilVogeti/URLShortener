@@ -18,6 +18,10 @@ To start the application, run the following command:
 
 ```bash
 docker compose up mysqldb redis -d
+```
+Wait for 30 seconds and then run the app container:
+
+```bash
 docker compose up app
 ```
 
