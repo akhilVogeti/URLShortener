@@ -54,7 +54,6 @@ public class UrlShortenServiceImpl implements UrlShortenService {
     public UrlEntity findByShortenedUrl(String shortUrl) {
         String cacheKey = shortUrl;
         UrlEntity existingUrl = getFromCache(cacheKey);
-        System.out.println(existingUrl);
         if (existingUrl.getCreatedAt() == null) {
             log.info("URL not found in cache, getting from database");
             existingUrl = urlRepository.findByShortenedUrl(shortUrl);
