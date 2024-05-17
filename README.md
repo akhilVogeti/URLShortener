@@ -10,8 +10,8 @@ A Spring Boot application that takes in a long URL and returns a randomized shor
 First, clone the repository and navigate to the project directory:
 
 ```bash
-git clone https://github.com/your-username/url-shortener.git
-cd url-shortener
+git clone https://github.com/akhilVogeti/shortProject.git
+cd shortProject   
 ```
 
 To start the application, run the following command:
