@@ -10,8 +10,8 @@ A Spring Boot application that takes in a long URL and returns a randomized shor
 First, clone the repository and navigate to the project directory:
 
 ```bash
-git clone https://github.com/your-username/url-shortener.git
-cd url-shortener
+git clone https://github.com/akhilVogeti/URLShortener.git
+cd URLShortener 
 ```
 
 To start the application, run the following command:
@@ -61,7 +61,7 @@ A successful response for shortening a URL looks like this:
   "actualUrl": "https://www.example.com/",
   "shortenedUrl": "a1b2c3d4e5f6g7h8i9j0k1l2m3",
   "createdAt": "2022-01-01T12:00:00Z",
-  "expiresAt": "2022-01-02T12:00:00Z"
+  "expiresAt": "2022-01-02T12:03:00Z"
 }
 ```
 
@@ -73,7 +73,7 @@ An example response for expanding a short URL:
   "actualUrl": "https://www.example.com/",
   "shortenedUrl": "a1b2c3d4e5f6g7h8i9j0k1l2m3",
   "createdAt": "2022-01-01T12:00:00Z",
-  "expiresAt": "2022-01-02T12:00:00Z"
+  "expiresAt": "2022-01-02T12:03:00Z"
 }
 ```
 

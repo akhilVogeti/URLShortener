@@ -20,7 +20,7 @@ public class RandomShortener implements UrlShorteningStrategy {
     @Override
     public String shorten(String longUrl) throws Exception{
         log.info("in random shortening service");
-        String shortUrlGenerated = generateRandomString(10);
+        String shortUrlGenerated = generateRandomString(15);
         log.info("random string done");
         return shortUrlGenerated;
     }

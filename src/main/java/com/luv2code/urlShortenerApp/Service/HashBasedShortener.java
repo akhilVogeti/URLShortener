@@ -31,8 +31,11 @@ public class HashBasedShortener implements UrlShorteningStrategy {
             MessageDigest md5 = MessageDigest.getInstance("MD5");
             md5.update(textBytes);
             byte[] md5Hash = md5.digest();
+
             String encodedString = new Base32().encodeAsString(md5Hash);
-            String shortUrl = randomlySelect8Chars(encodedString);
+
+            String shortUrl = randomlySelectChars(encodedString);
+
             return shortUrl;
         } catch (Exception e) {
             log.error("error in hash based shortening");
@@ -40,16 +43,18 @@ public class HashBasedShortener implements UrlShorteningStrategy {
         }
     }
 
-    private String randomlySelect8Chars(String encodedString) {
+    private String randomlySelectChars(String encodedString) {
+
         Random random = ThreadLocalRandom.current();
         char[] encodedChars =  encodedString.toCharArray();
-        assert encodedChars.length == 21;
-        for(int i=20; i >=0; i--) {
+
+
+        for(int i=encodedChars.length-1; i >=0; i--) {
             int randomIndex =  random.nextInt(i+1);
             swap(encodedChars,randomIndex,i);
         }
 
-        return new String(encodedChars,0,8);
+        return new String(encodedChars,0,15);
     }
 
     private static void swap(char[] chars, int i, int j) {
